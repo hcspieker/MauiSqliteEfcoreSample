@@ -1,4 +1,6 @@
-﻿namespace MauiMseApp
+﻿using MauiMseApp.Views;
+
+namespace MauiMseApp
 {
     public partial class App : Application
     {
@@ -6,7 +8,7 @@
         {
             InitializeComponent();
 
-            MainPage = new AppShell();
+            MainPage = new ManageTodoListPage();
         }
     }
 }

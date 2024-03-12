@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:models="clr-namespace:MauiMseApp.Models"
+             xmlns:viewModels="clr-namespace:MauiMseApp.ViewModels"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiMseApp.Views.ManageTodoListPage"
+             x:DataType="viewModels:ManageTodoListViewModel"
+             Title="ManageTodoListPage">
+    <ContentPage.BindingContext>
+        <viewModels:ManageTodoListViewModel />
+    </ContentPage.BindingContext>
+    <Grid RowDefinitions="*,auto">
+        <CollectionView ItemsSource="{Binding TodoLists}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:TodoList">
+                    <Frame Margin="5">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding Title}" />
+                            <CollectionView ItemsSource="{Binding Items}">
+                                <CollectionView.EmptyView>
+                                    <Label Text="No items"
+                                           FontAttributes="Italic"
+                                           Opacity=".3"
+                                           HorizontalTextAlignment="Center" />
+                                </CollectionView.EmptyView>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="models:TodoListItem">
+                                        <Grid ColumnDefinitions="30,*">
+                                            <CheckBox IsChecked="{Binding IsChecked}" />
+                                            <Label Grid.Column="1"
+                                                   VerticalTextAlignment="Center"
+                                                   Text="{Binding Title}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                            <Grid ColumnDefinitions="2*,*">
+                                <Entry Text="{Binding ItemToAdd}" />
+                                <Button Grid.Column="1"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ManageTodoListViewModel}}, Path=AddTodoListItemCommand}"
+                                        CommandParameter="{Binding .}"
+                                        Text="Add item" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <Grid Grid.Row="1"
+              RowDefinitions="3,*"
+              Margin="5"
+              RowSpacing="5"
+              ColumnDefinitions="2*,*">
+            <BoxView Grid.ColumnSpan="2"
+                     HeightRequest="3"
+                     HorizontalOptions="FillAndExpand"
+                     Background="{StaticResource Primary}" />
+            <Entry Grid.Row="1"
+                   Placeholder="todo list title"
+                   Text="{Binding NewTodoListTitle}" />
+            <Button Grid.Row="1"
+                    Grid.Column="1"
+                    Text="Add List"
+                    Command="{Binding AddTodoListCommand}" />
+        </Grid>
+    </Grid>
+</ContentPage>

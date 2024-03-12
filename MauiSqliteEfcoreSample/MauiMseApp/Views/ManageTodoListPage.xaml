@@ -30,8 +30,13 @@
                                 </CollectionView.EmptyView>
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate x:DataType="models:TodoListItem">
-                                        <Grid ColumnDefinitions="30,*">
-                                            <CheckBox IsChecked="{Binding IsChecked}" />
+                                        <Grid ColumnDefinitions="30,*,auto">
+                                            <CheckBox IsChecked="{Binding IsChecked}">
+                                                <CheckBox.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ManageTodoListViewModel}}, Path=IsCheckedChangedCommand}"
+                                                                          CommandParameter="{Binding .}" />
+                                                </CheckBox.GestureRecognizers>
+                                            </CheckBox>
                                             <Label Grid.Column="1"
                                                    VerticalTextAlignment="Center"
                                                    Text="{Binding Title}" />

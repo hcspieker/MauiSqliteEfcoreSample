@@ -17,7 +17,7 @@ namespace MauiMseApp.Models
 
         public TodoListItem(EtyTodoListItem etyTodoListItem)
         {
-            Id = etyTodoListItem.EtyTodoListId;
+            Id = etyTodoListItem.EtyTodoListItemId;
             Title = etyTodoListItem.Title;
             IsChecked = etyTodoListItem.IsChecked;
         }

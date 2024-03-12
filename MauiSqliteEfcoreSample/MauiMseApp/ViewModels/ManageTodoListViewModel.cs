@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MauiMseApp.Data;
 using MauiMseApp.Data.Entity;
@@ -21,17 +23,24 @@ namespace MauiMseApp.ViewModels
         }
 
         [RelayCommand]
-        void Appearing()
+        async Task Appearing()
         {
-            TodoLists.Clear();
-
-            using var context = new TodoListContext();
-            var entries = context.EtyTodoLists.Include(x => x.EtyTodoListItems).Select(x => new TodoList(x)).ToList();
-            if (!entries.Any()) return;
-
-            foreach (var entry in entries)
+            try
             {
-                TodoLists.Add(entry);
+                TodoLists.Clear();
+
+                using var context = new TodoListContext();
+                var entries = context.EtyTodoLists.Include(x => x.EtyTodoListItems).Select(x => new TodoList(x)).ToList();
+                if (!entries.Any()) return;
+
+                foreach (var entry in entries)
+                {
+                    TodoLists.Add(entry);
+                }
+            }
+            catch (Exception e)
+            {
+                await PrintError(e);
             }
         }
 
@@ -41,13 +50,21 @@ namespace MauiMseApp.ViewModels
             if (string.IsNullOrWhiteSpace(NewTodoListTitle))
                 return;
 
-            var entry = new EtyTodoList { Title = NewTodoListTitle };
-            using var context = new TodoListContext();
-            context.Add(entry);
-            await context.SaveChangesAsync();
+            try
+            {
+                var entry = new EtyTodoList { Title = NewTodoListTitle };
+                using var context = new TodoListContext();
+                context.Add(entry);
+                await context.SaveChangesAsync();
 
-            TodoLists.Add(new TodoList(entry));
-            NewTodoListTitle = string.Empty;
+                TodoLists.Add(new TodoList(entry));
+                NewTodoListTitle = string.Empty;
+                await Toast.Make("added list", ToastDuration.Short).Show();
+            }
+            catch (Exception e)
+            {
+                await PrintError(e);
+            }
         }
 
         [RelayCommand]
@@ -56,13 +73,51 @@ namespace MauiMseApp.ViewModels
             if (string.IsNullOrWhiteSpace(todoList.ItemToAdd))
                 return;
 
-            var entry = new EtyTodoListItem { EtyTodoListId = todoList.Id, Title = todoList.ItemToAdd };
-            using var context = new TodoListContext();
-            context.Add(entry);
-            await context.SaveChangesAsync();
+            try
+            {
+                var entry = new EtyTodoListItem { EtyTodoListId = todoList.Id, Title = todoList.ItemToAdd };
+                using var context = new TodoListContext();
+                context.Add(entry);
+                await context.SaveChangesAsync();
 
-            todoList.Items.Add(new TodoListItem(entry));
-            todoList.ItemToAdd = string.Empty;
+                todoList.Items.Add(new TodoListItem(entry));
+                todoList.ItemToAdd = string.Empty;
+                await Toast.Make("added item", ToastDuration.Short).Show();
+            }
+            catch (Exception e)
+            {
+                await PrintError(e);
+            }
+        }
+
+        [RelayCommand]
+        async Task IsCheckedChanged(TodoListItem item)
+        {
+            try
+            {
+                item.IsChecked = !item.IsChecked;
+                using var context = new TodoListContext();
+                var entry = context.EtyTodoListItems.Single(x => x.EtyTodoListItemId == item.Id);
+                entry.IsChecked = item.IsChecked;
+                await context.SaveChangesAsync();
+                await Toast.Make("saved checkbox state", ToastDuration.Short).Show();
+            }
+            catch (Exception e)
+            {
+                await PrintError(e);
+            }
+        }
+
+        async Task PrintError(Exception e)
+        {
+            try
+            {
+                await Toast.Make($"an error occured: {e}", ToastDuration.Long).Show();
+            }
+            catch
+            {
+                // ignored
+            }
         }
     }
 }

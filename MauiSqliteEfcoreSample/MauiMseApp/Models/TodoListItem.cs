@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using MauiMseApp.Data.Entity;
 
 namespace MauiMseApp.Models
 {
@@ -8,5 +9,17 @@ namespace MauiMseApp.Models
         public string Title { get; set; } = string.Empty;
         [ObservableProperty]
         bool isChecked;
+
+        public TodoListItem()
+        {
+
+        }
+
+        public TodoListItem(EtyTodoListItem etyTodoListItem)
+        {
+            Id = etyTodoListItem.EtyTodoListId;
+            Title = etyTodoListItem.Title;
+            IsChecked = etyTodoListItem.IsChecked;
+        }
     }
 }

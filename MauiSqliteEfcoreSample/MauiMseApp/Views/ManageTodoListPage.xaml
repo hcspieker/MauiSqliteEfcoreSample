@@ -20,7 +20,18 @@
                 <DataTemplate x:DataType="models:TodoList">
                     <Frame Margin="5">
                         <VerticalStackLayout>
-                            <Label Text="{Binding Title}" />
+                            <Grid ColumnDefinitions="auto,*"
+                                  ColumnSpacing="10">
+                                <Button Text="Delete"
+                                        BackgroundColor="Red"
+                                        FontSize="Micro"
+                                        HeightRequest="20"
+                                        Padding="5,0"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ManageTodoListViewModel}}, Path=DeleteTodoListCommand}"
+                                        CommandParameter="{Binding .}" />
+                                <Label Grid.Column="1"
+                                       Text="{Binding Title}" />
+                            </Grid>
                             <CollectionView ItemsSource="{Binding Items}">
                                 <CollectionView.EmptyView>
                                     <Label Text="No items"
@@ -40,6 +51,14 @@
                                             <Label Grid.Column="1"
                                                    VerticalTextAlignment="Center"
                                                    Text="{Binding Title}" />
+                                            <Button Grid.Column="2"
+                                                    Text="Delete"
+                                                    BackgroundColor="Red"
+                                                    FontSize="Micro"
+                                                    HeightRequest="20"
+                                                    Padding="5,0"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ManageTodoListViewModel}}, Path=DeleteTodoListItemCommand}"
+                                                    CommandParameter="{Binding .}" />
                                         </Grid>
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
